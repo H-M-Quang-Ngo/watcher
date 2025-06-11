@@ -109,14 +109,17 @@ class BaseAction(loadable.Loadable, metaclass=abc.ABCMeta):
         """
         raise NotImplementedError()
 
-    @abc.abstractmethod
-    def post_condition(self):
+    def post_condition(self) -> bool:
         """Hook: called after the execution of an action
 
         This function is called regardless of whether an action succeeded or
-        not. So you can use it to perform cleanup operations.
+        not. So you can use it to perform cleanup operations. It will return
+        `True` for a successful action (default) and `False` for a failed one.
+
+        :returns: A flag indicating whether or not the action succeeded
+        :rtype: bool
         """
-        raise NotImplementedError()
+        return True
 
     @property
     @abc.abstractmethod

@@ -204,10 +204,6 @@ class Migrate(base.BaseAction):
         # the source_node
         pass
 
-    def post_condition(self):
-        # TODO(jed): check extra parameters (network response, etc.)
-        pass
-
     def get_description(self):
         """Description of the action"""
         return "Moving a VM instance from source_node to destination_node"

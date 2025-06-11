@@ -160,7 +160,9 @@ class TaskFlowActionContainer(base.BaseTaskFlowActionContainer):
 
     def do_post_execute(self):
         LOG.debug("Post-condition action: %s", self.name)
-        self.action.post_condition()
+        if not self.action.post_condition():
+            self.engine.notify(self._db_action,
+                               objects.action.State.FAILED)
 
     def do_revert(self, *args, **kwargs):
         # NOTE: Not rollback action plan
