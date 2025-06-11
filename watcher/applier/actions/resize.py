@@ -102,10 +102,6 @@ class Resize(base.BaseAction):
         # the source_node
         pass
 
-    def post_condition(self):
-        # TODO(jed): check extra parameters (network response, etc.)
-        pass
-
     def get_description(self):
         """Description of the action"""
         return "Resize a server with specified flavor."

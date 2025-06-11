@@ -131,9 +131,6 @@ class ChangeNodePowerState(base.BaseAction):
     def pre_condition(self):
         pass
 
-    def post_condition(self):
-        pass
-
     def get_description(self):
         """Description of the action"""
         return ("Compute node power on/off through Ironic or MaaS.")

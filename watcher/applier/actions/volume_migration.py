@@ -238,8 +238,5 @@ class VolumeMigrate(base.BaseAction):
     def pre_condition(self):
         pass
 
-    def post_condition(self):
-        pass
-
     def get_description(self):
         return "Moving a volume to destination_node or destination_type"

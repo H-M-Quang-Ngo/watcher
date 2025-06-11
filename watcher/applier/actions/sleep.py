@@ -69,9 +69,6 @@ class Sleep(base.BaseAction):
     def pre_condition(self):
         pass
 
-    def post_condition(self):
-        pass
-
     def get_description(self):
         """Description of the action"""
         return "Wait for a given interval in seconds."
