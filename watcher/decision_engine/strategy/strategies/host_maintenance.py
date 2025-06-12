@@ -53,7 +53,7 @@ class HostMaintenance(base.HostMaintenanceBaseStrategy):
 
     INSTANCE_MIGRATION = "migrate"
     CHANGE_NOVA_SERVICE_STATE = "change_nova_service_state"
-    STOP_INSTANCE = "stop_instance"
+    INSTANCE_STOP = "stop"
 
     def __init__(self, config, osc=None):
         super(HostMaintenance, self).__init__(config, osc)
@@ -186,11 +186,14 @@ class HostMaintenance(base.HostMaintenanceBaseStrategy):
     def add_action_stop_instance(self, instance):
         """Add an action for instance stop into the solution."""
         self.solution.add_action(
-            action_type=self.STOP_INSTANCE,
+            action_type=self.INSTANCE_STOP,
             resource_id=instance.uuid)
 
-    def instance_migration(self, instance, src_node, des_node=None):
-        """Add an action for instance migration into the solution.
+    def instance_handle(self, instance, src_node, des_node=None):
+        """Add an action for instance handling into the solution.
+
+        Depending on the configuration and instance state, this may stop the
+        instance, live/cold migrate it, or do nothing.
 
         :param instance: instance object
         :param src_node: node object
@@ -212,10 +215,9 @@ class HostMaintenance(base.HostMaintenanceBaseStrategy):
             if disable_live_migration:
                 # Stop active instance first, then cold migrate
                 self.add_action_stop_instance(instance)
-                if not disable_cold_migration:
-                    migration_type = 'cold'
-                else:
-                    return  # Only stop, no migration
+                if disable_cold_migration:
+                    return # Only stop, no migration
+                migration_type = 'cold'
             else:
                 # Live migrate active instance
                 migration_type = 'live'
@@ -224,8 +226,7 @@ class HostMaintenance(base.HostMaintenanceBaseStrategy):
             if disable_cold_migration:
                 # Non-active instance, cold migration disabled, then do nothing
                 return
-            else:
-                migration_type = 'cold'
+            migration_type = 'cold'
 
         params = {'migration_type': migration_type,
                   'source_node': src_node.uuid,
@@ -246,7 +247,7 @@ class HostMaintenance(base.HostMaintenanceBaseStrategy):
         """
         instances = self.compute_model.get_node_instances(source_node)
         for instance in instances:
-            self.instance_migration(instance, source_node, destination_node)
+            self.instance_handle(instance, source_node, destination_node)
 
     def safe_maintain(self, maintenance_node, backup_node=None):
         """safe maintain one compute node
@@ -281,7 +282,7 @@ class HostMaintenance(base.HostMaintenanceBaseStrategy):
         self.add_action_maintain_compute_node(maintenance_node)
         instances = self.compute_model.get_node_instances(maintenance_node)
         for instance in instances:
-            self.instance_migration(instance, maintenance_node)
+            self.instance_handle(instance, maintenance_node)
 
     def pre_execute(self):
         self._pre_execute()

@@ -23,11 +23,10 @@ from watcher.common import nova_helper
 LOG = log.getLogger(__name__)
 
 
-class StopInstance(base.BaseAction):
+class Stop(base.BaseAction):
     """Stops a server instance
 
     This action will allow you to stop a server instance on a compute host.
-    This is typically used when migration is not available or desired.
 
     The action schema is::
 
@@ -61,7 +60,7 @@ class StopInstance(base.BaseAction):
     def instance_uuid(self):
         return self.resource_id
 
-    def stop_instance(self):
+    def stop(self):
         nova = nova_helper.NovaHelper(osc=self.osc)
         LOG.debug("Stopping instance %s", self.instance_uuid)
 
@@ -72,7 +71,7 @@ class StopInstance(base.BaseAction):
         try:
             result = nova.stop_instance(instance_id=self.instance_uuid)
             if result:
-                LOG.info(_("Successfully stopped instance %(uuid)s"),
+                LOG.debug(_("Successfully stopped instance %(uuid)s"),
                          {'uuid': self.instance_uuid})
             else:
                 LOG.error("Failed to stop instance %(uuid)s",
@@ -87,9 +86,9 @@ class StopInstance(base.BaseAction):
             raise
 
     def execute(self):
-        return self.stop_instance()
+        return self.stop()
 
-    def revert_stop_instance(self):
+    def revert_stop(self):
         """Revert the stop action by trying to start the instance"""
         nova = nova_helper.NovaHelper(osc=self.osc)
         LOG.debug("Starting instance %s", self.instance_uuid)
@@ -98,8 +97,8 @@ class StopInstance(base.BaseAction):
             # Use start_instance from nova_helper - this method exists
             result = nova.start_instance(instance_id=self.instance_uuid)
             if result:
-                LOG.info(_("Successfully reverted stop action and started instance %(uuid)s"),
-                         {'uuid': self.instance_uuid})
+                LOG.debug(_("Successfully reverted stop action and started instance %(uuid)s"),
+                          {'uuid': self.instance_uuid})
             else:
                 LOG.error("Failed to start instance %(uuid)s",
                           {'uuid': self.instance_uuid})
@@ -114,7 +113,7 @@ class StopInstance(base.BaseAction):
 
     def revert(self):
         LOG.debug("Reverting stop action for instance %s", self.instance_uuid)
-        return self.revert_stop_instance()
+        return self.revert_stop()
 
     def abort(self):
         """Abort the stop action - not applicable for stop operations"""
