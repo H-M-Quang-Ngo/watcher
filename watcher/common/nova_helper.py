@@ -569,7 +569,7 @@ class NovaHelper(object):
             LOG.debug("Instance not found: %s", instance_id)
             return False
         elif getattr(instance, 'OS-EXT-STS:vm_state') == "active":
-            LOG.debug("Instance has already active: %s", instance_id)
+            LOG.debug("Instance has already been started: %s", instance_id)
             return True
         else:
             self.nova.servers.start(instance_id)

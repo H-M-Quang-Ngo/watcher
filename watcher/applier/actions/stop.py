@@ -88,7 +88,7 @@ class Stop(base.BaseAction):
     def execute(self):
         return self.stop()
 
-    def revert_stop(self):
+    def _revert_stop(self):
         """Revert the stop action by trying to start the instance"""
         nova = nova_helper.NovaHelper(osc=self.osc)
         LOG.debug("Starting instance %s", self.instance_uuid)
@@ -113,7 +113,7 @@ class Stop(base.BaseAction):
 
     def revert(self):
         LOG.debug("Reverting stop action for instance %s", self.instance_uuid)
-        return self.revert_stop()
+        return self._revert_stop()
 
     def abort(self):
         """Abort the stop action - not applicable for stop operations"""

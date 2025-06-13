@@ -88,7 +88,7 @@ class HostMaintenance(base.HostMaintenanceBaseStrategy):
                     "description": "Disable live migration during maintenance. "
                                    "If True, active instances will be stopped "
                                    "instead of live migrated."
-                                   "If `disable_live_migration` is `True`,"
+                                   "If `disable_cold_migration` is not set,"
                                    "the newly stopped instances will be "
                                    "cold migrated.",
                     "type": "boolean",

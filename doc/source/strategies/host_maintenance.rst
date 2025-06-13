@@ -56,15 +56,25 @@ Configuration
 
 Strategy parameters are:
 
-==================== ====== ====================================
-parameter            type   default Value description
-==================== ====== ====================================
-``maintenance_node`` String The name of the compute node which
-                            need maintenance. Required.
-``backup_node``      String The name of the compute node which
-                            will backup the maintenance node.
-                            Optional.
-==================== ====== ====================================
+========================== ======== ============= ========================================
+parameter                  type     default Value description
+========================== ======== ============= ========================================
+``maintenance_node``       String                 The name of the compute node which need
+                                                  maintenance. Required.
+``backup_node``            String                 The name of the compute node which will
+                                                  backup the maintenance node. Optional.
+``disable_live_migration`` Boolean  False         False: Active instances will be
+                                                  live migrated.
+                                                  True: Active instances will be stopped.
+                                                  If ``disable_cold_migration`` is
+                                                  not set, inactive instances including
+                                                  newly stopped ones will be cold migrated.
+                                                  Optional.
+``disable_cold_migration`` Boolean  False         False: Inactive instances will be cold
+                                                  migrated.
+                                                  True: Inactive instances will not be
+                                                  cold migrated. Optional.
+========================== ======== ============= ========================================
 
 Efficacy Indicator
 ------------------
@@ -86,6 +96,8 @@ How to use it ?
       -g cluster_maintaining -s host_maintenance \
       -p maintenance_node=compute01 \
       -p backup_node=compute02 \
+      -p disable_live_migration=True \
+      -p disable_cold_migration=True \
       --auto-trigger
 
 External Links
